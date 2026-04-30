@@ -1,0 +1,6 @@
+{
+  "name": "HeartPulse AI",
+  "description": "AI-powered heart disease risk assessment and clinical analysis tool.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["AI Analysis", "Clinical Data Processing"]
+}
