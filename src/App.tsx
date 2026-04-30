@@ -80,7 +80,7 @@ export default function App() {
               <Heart className="w-6 h-6 text-brand-primary fill-brand-primary/20" />
             </div>
             <div>
-              <h1 className="font-bold text-slate-900 leading-tight">HeartPulse</h1>
+              <h1 className="font-bold text-slate-900 leading-tight">Heart Disease Predictor</h1>
               <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Clinical Insight Assistant</p>
             </div>
           </div>
@@ -318,7 +318,7 @@ export default function App() {
       <footer className="max-w-6xl mx-auto px-4 py-12 border-t border-ui-border text-center space-y-4">
         <div className="flex items-center justify-center gap-2 opacity-30">
           <Heart className="w-4 h-4 text-brand-accent fill-brand-accent" />
-          <span className="text-[10px] font-black uppercase tracking-[0.3em]">HeartPulse System v2.0.4</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.3em]">Heart Disease Predictor v2.0.4</span>
         </div>
         <p className="text-[10px] text-slate-400 max-w-lg mx-auto leading-relaxed">
           The prediction model uses a deep behavioral network to correlate physiological biomarkers with probability scores. Built for clinical educational research.
