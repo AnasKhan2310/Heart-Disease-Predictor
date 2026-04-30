@@ -6,7 +6,7 @@
 
 This contains everything you need to run your app locally.
 
-View your app in AI Studio: https://ai.studio/apps/6998281e-ef08-411e-9e41-a01e9dcef0ac
+View your app : https://heartdiseasepredictions.netlify.app/
 
 ## Run Locally
 
