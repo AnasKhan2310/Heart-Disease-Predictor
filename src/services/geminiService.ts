@@ -1,15 +1,3 @@
-import { GoogleGenAI, Type } from "@google/genai";
-
-const getAI = () => {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
-  
-  if (!apiKey) {
-    throw new Error("API Key is missing. Please set VITE_GEMINI_API_KEY in your Netlify site settings (Build & deploy > Environment variables).");
-  }
-  
-  return new GoogleGenAI({ apiKey });
-};
-
 export interface HeartData {
   age: number;
   sex: number;
@@ -34,8 +22,6 @@ export interface AnalysisResult {
 }
 
 export async function analyzeHeartHealth(data: HeartData): Promise<AnalysisResult> {
-  const ai = getAI();
-
   const prompt = `Analyze the following heart clinical data for potential heart disease risk. 
   Data: ${JSON.stringify(data)}
   
@@ -45,36 +31,23 @@ export async function analyzeHeartHealth(data: HeartData): Promise<AnalysisResul
   3. Brief clinical insights based on benchmarks.
   4. 3-4 actionable medical recommendations.
   
-  Format the response as a valid JSON object.`;
+  Format the response as a valid JSON object matching the AnalysisResult interface.`;
 
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            riskLevel: { type: Type.STRING, enum: ["Low", "Medium", "High"] },
-            probability: { type: Type.NUMBER },
-            insights: { type: Type.STRING },
-            recommendations: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING }
-            }
-          },
-          required: ["riskLevel", "probability", "insights", "recommendations"]
-        }
-      }
+    const response = await fetch("/api/analyze", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ prompt }),
     });
 
-    const text = response.text;
-    if (!text) {
-      throw new Error("Received an empty response from the health analysis system.");
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to analyze heart health data.");
     }
 
-    return JSON.parse(text) as AnalysisResult;
+    return await response.json() as AnalysisResult;
   } catch (error) {
     console.error("Analysis failed:", error);
     if (error instanceof Error) {
