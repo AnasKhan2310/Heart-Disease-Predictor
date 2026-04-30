@@ -71,59 +71,59 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-ui-bg font-sans selection:bg-brand-primary/10">
+    <div className="min-h-screen bg-ui-bg font-sans selection:bg-brand-primary/10 pb-20 md:pb-0">
       {/* Friendly Navigation */}
-      <nav className="bg-ui-card border-b border-ui-border sticky top-0 z-10">
+      <nav className="bg-ui-card border-b border-ui-border sticky top-0 z-30 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="bg-brand-primary/10 p-2 rounded-xl">
-              <Heart className="w-6 h-6 text-brand-primary fill-brand-primary/20" />
+            <div className="bg-brand-primary/10 p-2 rounded-xl shrink-0">
+              <Heart className="w-5 h-5 md:w-6 md:h-6 text-brand-primary fill-brand-primary/20" />
             </div>
-            <div>
-              <h1 className="font-bold text-slate-900 leading-tight">Heart Disease Predictor</h1>
-              <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Clinical Insight Assistant</p>
+            <div className="min-w-0">
+              <h1 className="font-bold text-slate-900 leading-tight truncate text-sm md:text-base">Heart Disease Predictor</h1>
+              <p className="text-[9px] md:text-[10px] text-slate-500 font-medium uppercase tracking-wider truncate">Clinical Insight Assistant</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <button 
               onClick={() => setResult(null)}
-              className="text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
+              className="text-xs md:text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors hidden sm:block"
             >
-              Clear Analysis
+              Clear
             </button>
-            <div className="h-4 w-px bg-slate-200"></div>
+            <div className="h-4 w-px bg-slate-200 hidden sm:block"></div>
             <button 
               onClick={handleSubmit}
               disabled={loading}
-              className="bg-brand-primary hover:bg-brand-secondary text-white px-5 py-2 rounded-full text-sm font-bold shadow-lg shadow-brand-primary/20 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-brand-primary hover:bg-brand-secondary text-white px-4 md:px-5 py-2 rounded-full text-xs md:text-sm font-bold shadow-lg shadow-brand-primary/20 transition-all flex items-center gap-2 disabled:opacity-50"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Activity className="w-4 h-4" />}
-              Analyze Health
+              {loading ? <Loader2 className="w-3.5 h-3.5 md:w-4 md:h-4 animate-spin" /> : <Activity className="w-3.5 h-3.5 md:w-4 md:h-4" />}
+              <span className="hidden xs:inline">Analyze</span>
             </button>
           </div>
         </div>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-4 py-8 md:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <main className="max-w-6xl mx-auto px-4 py-6 md:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-start">
           
           {/* Health Information Form */}
-          <section className="lg:col-span-7 space-y-8">
+          <section className="lg:col-span-7 space-y-6 md:space-y-8">
             <header className="space-y-2">
-              <h2 className="text-2xl font-black text-slate-900 tracking-tight">Patient Information</h2>
-              <p className="text-slate-500 text-sm leading-relaxed max-w-md">
+              <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">Patient Information</h2>
+              <p className="text-slate-500 text-xs md:text-sm leading-relaxed max-w-md">
                 Please enter the following health indicators. These biomarkers help assess cardiovascular health patterns.
               </p>
             </header>
 
-            <form onSubmit={handleSubmit} className="space-y-10">
+            <form onSubmit={handleSubmit} className="space-y-8 md:space-y-10">
               {/* Group 1: Basics */}
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6 bg-white p-5 md:p-0 rounded-2xl md:bg-transparent border border-ui-border md:border-0 shadow-sm md:shadow-none">
                 <div className="flex items-center gap-2 text-brand-primary">
                   <Info className="w-4 h-4" />
-                  <h3 className="text-xs font-black uppercase tracking-widest">General Profile</h3>
+                  <h3 className="text-[10px] md:text-xs font-black uppercase tracking-widest">General Profile</h3>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700">Age</label>
                     <input 
@@ -146,12 +146,12 @@ export default function App() {
               </div>
 
               {/* Group 2: Measurements */}
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6 bg-white p-5 md:p-0 rounded-2xl md:bg-transparent border border-ui-border md:border-0 shadow-sm md:shadow-none">
                 <div className="flex items-center gap-2 text-brand-primary">
                   <Activity className="w-4 h-4" />
-                  <h3 className="text-xs font-black uppercase tracking-widest">Clinical Measurements</h3>
+                  <h3 className="text-[10px] md:text-xs font-black uppercase tracking-widest">Clinical Measurements</h3>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700">Blood Pressure (Systolic)</label>
                     <div className="relative">
@@ -198,12 +198,12 @@ export default function App() {
               </div>
 
               {/* Group 3: Indicators */}
-              <div className="space-y-6">
+              <div className="space-y-4 md:space-y-6 bg-white p-5 md:p-0 rounded-2xl md:bg-transparent border border-ui-border md:border-0 shadow-sm md:shadow-none">
                 <div className="flex items-center gap-2 text-brand-primary">
                   <AlertTriangle className="w-4 h-4" />
-                  <h3 className="text-xs font-black uppercase tracking-widest">Health Patterns</h3>
+                  <h3 className="text-[10px] md:text-xs font-black uppercase tracking-widest">Health Patterns</h3>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700">Exercise-Induced ST Depression</label>
                     <input 
@@ -227,13 +227,13 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="lg:hidden pt-4">
+              <div className="fixed bottom-4 left-4 right-4 z-40 lg:hidden">
                 <button 
                   onClick={handleSubmit}
                   disabled={loading}
-                  className="w-full bg-brand-primary text-white py-4 rounded-xl font-bold text-lg shadow-xl shadow-brand-primary/20 flex items-center justify-center gap-3 transition-transform active:scale-[0.98]"
+                  className="w-full bg-brand-primary text-white py-4 rounded-2xl font-bold text-base shadow-2xl shadow-brand-primary/40 flex items-center justify-center gap-3 transition-transform active:scale-[0.98] border border-white/20"
                 >
-                  {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Stethoscope className="w-6 h-6" />}
+                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Stethoscope className="w-5 h-5" />}
                   Perform Health Analysis
                 </button>
               </div>
