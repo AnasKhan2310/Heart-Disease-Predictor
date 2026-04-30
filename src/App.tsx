@@ -80,7 +80,7 @@ export default function App() {
               <Heart className="w-6 h-6 text-brand-primary fill-brand-primary/20" />
             </div>
             <div>
-              <h1 className="font-bold text-slate-900 leading-tight">HeartPulse AI</h1>
+              <h1 className="font-bold text-slate-900 leading-tight">HeartPulse</h1>
               <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Clinical Insight Assistant</p>
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function App() {
             <header className="space-y-2">
               <h2 className="text-2xl font-black text-slate-900 tracking-tight">Patient Information</h2>
               <p className="text-slate-500 text-sm leading-relaxed max-w-md">
-                Please enter the following health indicators. These biomarkers help our AI assess cardiovascular health patterns.
+                Please enter the following health indicators. These biomarkers help assess cardiovascular health patterns.
               </p>
             </header>
 
@@ -234,7 +234,7 @@ export default function App() {
                   className="w-full bg-brand-primary text-white py-4 rounded-xl font-bold text-lg shadow-xl shadow-brand-primary/20 flex items-center justify-center gap-3 transition-transform active:scale-[0.98]"
                 >
                   {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Stethoscope className="w-6 h-6" />}
-                  Perform AI Analysis
+                  Perform Health Analysis
                 </button>
               </div>
             </form>
@@ -264,7 +264,7 @@ export default function App() {
                   </div>
 
                   <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 italic text-slate-600 text-sm leading-relaxed relative">
-                    <span className="absolute -top-3 left-4 bg-white px-2 text-[10px] font-black text-brand-primary uppercase tracking-widest border border-slate-100 rounded">AI Insight</span>
+                    <span className="absolute -top-3 left-4 bg-white px-2 text-[10px] font-black text-brand-primary uppercase tracking-widest border border-slate-100 rounded">Clinical Insight</span>
                     "{result.insights}"
                   </div>
 
@@ -287,7 +287,7 @@ export default function App() {
 
                   <div className="pt-6 border-t border-slate-100 flex items-center gap-3 text-slate-400 text-[10px] font-medium italic">
                     <AlertTriangle className="w-3.5 h-3.5" />
-                    Disclaimer: This is an AI assessment and not a substitute for professional medical advice.
+                    Disclaimer: This is a diagnostic assessment and not a substitute for professional medical advice.
                   </div>
                 </motion.div>
               ) : (
@@ -305,7 +305,7 @@ export default function App() {
                   <div className="space-y-2">
                     <h3 className="font-bold text-slate-900">Ready for Analysis</h3>
                     <p className="text-sm text-slate-500 leading-relaxed max-w-[240px] mx-auto">
-                      Fill out the health profile on the left and start the AI diagnostic process.
+                      Fill out the health profile on the left and start the diagnostic process.
                     </p>
                   </div>
                 </div>
@@ -318,7 +318,7 @@ export default function App() {
       <footer className="max-w-6xl mx-auto px-4 py-12 border-t border-ui-border text-center space-y-4">
         <div className="flex items-center justify-center gap-2 opacity-30">
           <Heart className="w-4 h-4 text-brand-accent fill-brand-accent" />
-          <span className="text-[10px] font-black uppercase tracking-[0.3em]">HeartPulse AI System v2.0.4</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.3em]">HeartPulse System v2.0.4</span>
         </div>
         <p className="text-[10px] text-slate-400 max-w-lg mx-auto leading-relaxed">
           The prediction model uses a deep behavioral network to correlate physiological biomarkers with probability scores. Built for clinical educational research.
