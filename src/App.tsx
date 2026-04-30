@@ -55,7 +55,8 @@ export default function App() {
       setResult(analysis);
     } catch (error) {
       console.error(error);
-      alert("Something went wrong during the analysis.");
+      const message = error instanceof Error ? error.message : "Something went wrong during the analysis.";
+      alert(message);
     } finally {
       setLoading(false);
     }

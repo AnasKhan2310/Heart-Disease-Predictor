@@ -26,6 +26,12 @@ export interface AnalysisResult {
 }
 
 export async function analyzeHeartHealth(data: HeartData): Promise<AnalysisResult> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    console.error("GEMINI_API_KEY is missing. Please set it in your environment variables.");
+    throw new Error("API Key is missing. If you're seeing this on a deployed site, ensure GEMINI_API_KEY is configured in your settings.");
+  }
+
   const prompt = `Analyze the following heart clinical data for potential heart disease risk. 
   Data: ${JSON.stringify(data)}
   
@@ -59,9 +65,17 @@ export async function analyzeHeartHealth(data: HeartData): Promise<AnalysisResul
       }
     });
 
-    return JSON.parse(response.text || "{}") as AnalysisResult;
+    const text = response.text;
+    if (!text) {
+      throw new Error("Received an empty response from the health analysis system.");
+    }
+
+    return JSON.parse(text) as AnalysisResult;
   } catch (error) {
     console.error("Analysis failed:", error);
-    throw new Error("Failed to analyze heart health data.");
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("An unexpected error occurred during health analysis.");
   }
 }
