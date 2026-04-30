@@ -40,10 +40,20 @@ export default function App() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'oldpeak' ? parseFloat(value) : parseInt(value)
-    }));
+    
+    if (name === 'oldpeak') {
+      const parsedValue = parseFloat(value);
+      setFormData(prev => ({
+        ...prev,
+        [name]: isNaN(parsedValue) ? 0 : parsedValue
+      }));
+    } else {
+      const parsedValue = parseInt(value);
+      setFormData(prev => ({
+        ...prev,
+        [name]: isNaN(parsedValue) ? 0 : parsedValue
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -260,7 +270,11 @@ export default function App() {
                     </div>
                     <div className="text-right">
                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Confidence Score</p>
-                      <span className="text-3xl font-black text-slate-900">{Math.round(result.probability * 100)}%</span>
+                      <span className="text-3xl font-black text-slate-900">
+                        {typeof result.probability === 'number' && !isNaN(result.probability) 
+                          ? `${Math.round(result.probability * 100)}%` 
+                          : 'N/A'}
+                      </span>
                     </div>
                   </div>
 
