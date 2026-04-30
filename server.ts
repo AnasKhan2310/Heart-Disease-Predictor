@@ -23,22 +23,18 @@ async function startServer() {
         });
       }
 
-      const ai = new GoogleGenAI({ apiKey });
+      const genAI = new GoogleGenAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       
       const { prompt } = req.body;
       if (!prompt) {
         return res.status(400).json({ error: "Prompt is required" });
       }
 
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        config: {
-          responseMimeType: "application/json",
-        }
-      });
-
-      const text = response.text;
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+      
       if (!text) {
         throw new Error("Empty response from AI model");
       }

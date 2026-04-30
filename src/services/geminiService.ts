@@ -43,8 +43,18 @@ export async function analyzeHeartHealth(data: HeartData): Promise<AnalysisResul
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to analyze heart health data.");
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to analyze heart health data.");
+      } else {
+        throw new Error(`Server ignored the request (Status: ${response.status}). If you are on Netlify, please note that custom servers require Netlify Functions.`);
+      }
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error("Server returned an invalid response format. This usually means the API route is not properly configured on your hosting platform.");
     }
 
     return await response.json() as AnalysisResult;
