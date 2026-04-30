@@ -19,34 +19,37 @@ async function startServer() {
       const apiKey = process.env.GEMINI_API_KEY;
       if (!apiKey) {
         return res.status(500).json({ 
-          error: "GEMINI_API_KEY is not configured on the server." 
+          error: "GEMINI_API_KEY is not configured on the server. Please add it to your environment variables." 
         });
       }
 
-      const ai = new GoogleGenAI(apiKey);
-      const model = ai.getGenerativeModel({ model: "gemini-3-flash-preview" });
+      const ai = new GoogleGenAI({ apiKey });
       
       const { prompt } = req.body;
       if (!prompt) {
         return res.status(400).json({ error: "Prompt is required" });
       }
 
-      const result = await model.generateContent({
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
         contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: {
+        config: {
           responseMimeType: "application/json",
         }
       });
 
-      const response = await result.response;
-      const text = response.text();
-      
-      res.json(JSON.parse(text));
+      const text = response.text;
+      if (!text) {
+        throw new Error("Empty response from AI model");
+      }
+
+      // Sanitize JSON response in case model returns markdown block
+      const jsonContent = text.replace(/```json/g, "").replace(/```/g, "").trim();
+      res.json(JSON.parse(jsonContent));
     } catch (error) {
       console.error("Gemini API Error:", error);
-      res.status(500).json({ 
-        error: "Failed to process health analysis on the server." 
-      });
+      const errorMessage = error instanceof Error ? error.message : "Failed to process health analysis on the server.";
+      res.status(500).json({ error: errorMessage });
     }
   });
 
