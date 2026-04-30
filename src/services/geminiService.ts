@@ -1,6 +1,14 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+const getAI = () => {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error("API Key is missing. Please set VITE_GEMINI_API_KEY in your Netlify site settings (Build & deploy > Environment variables).");
+  }
+  
+  return new GoogleGenAI({ apiKey });
+};
 
 export interface HeartData {
   age: number;
@@ -26,11 +34,7 @@ export interface AnalysisResult {
 }
 
 export async function analyzeHeartHealth(data: HeartData): Promise<AnalysisResult> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    console.error("GEMINI_API_KEY is missing. Please set it in your environment variables.");
-    throw new Error("API Key is missing. If you're seeing this on a deployed site, ensure GEMINI_API_KEY is configured in your settings.");
-  }
+  const ai = getAI();
 
   const prompt = `Analyze the following heart clinical data for potential heart disease risk. 
   Data: ${JSON.stringify(data)}
@@ -45,7 +49,7 @@ export async function analyzeHeartHealth(data: HeartData): Promise<AnalysisResul
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3.1-pro-preview",
+      model: "gemini-3-flash-preview",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
