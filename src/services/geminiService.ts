@@ -1,3 +1,5 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
 export interface HeartData {
   age: number;
   sex: number;
@@ -25,13 +27,11 @@ export async function analyzeHeartHealth(data: HeartData): Promise<AnalysisResul
   const prompt = `Analyze the following heart clinical data for potential heart disease risk. 
   Data: ${JSON.stringify(data)}
   
-  Please provide a structured analysis including:
-  1. Risk Level (Low, Medium, High).
-  2. Estimated risk probability (0.0 to 1.0).
+  Provide:
+  1. Risk level (Low, Medium, High).
+  2. Estimated probability (0-100).
   3. Brief clinical insights based on benchmarks.
-  4. 3-4 actionable medical recommendations.
-  
-  Format the response as a valid JSON object matching the AnalysisResult interface.`;
+  4. 3-4 actionable medical recommendations.`;
 
   try {
     const response = await fetch("/api/analyze", {
@@ -43,26 +43,14 @@ export async function analyzeHeartHealth(data: HeartData): Promise<AnalysisResul
     });
 
     if (!response.ok) {
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to analyze heart health data.");
-      } else {
-        throw new Error(`Server ignored the request (Status: ${response.status}). If you are on Netlify, please note that custom servers require Netlify Functions.`);
-      }
-    }
-
-    const contentType = response.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-      throw new Error("Server returned an invalid response format. This usually means the API route is not properly configured on your hosting platform.");
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to analyze heart health data.");
     }
 
     return await response.json() as AnalysisResult;
   } catch (error) {
     console.error("Analysis failed:", error);
-    if (error instanceof Error) {
-      throw error;
-    }
+    if (error instanceof Error) throw error;
     throw new Error("An unexpected error occurred during health analysis.");
   }
 }

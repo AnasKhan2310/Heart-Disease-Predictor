@@ -15,22 +15,23 @@ async function startServer() {
   const PORT = 3000;
 
   app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
-  // Gemini API Proxy
+  // Gemini API Proxy (Server-side to keep key SECRET)
   app.post("/api/analyze", async (req, res) => {
     try {
       const apiKey = process.env.GEMINI_API_KEY;
       
       if (!apiKey || apiKey === "MY_GEMINI_API_KEY") {
-        console.error("CRITICAL: GEMINI_API_KEY is missing or invalid in server environment.");
+        console.error("CRITICAL: GEMINI_API_KEY is missing in server environment.");
         return res.status(500).json({ 
-          error: "API Key Missing: Please add 'GEMINI_API_KEY' to your environment variables in AI Studio (Settings > Secrets) or your hosting platform." 
+          error: "API Key Missing: Please add 'GEMINI_API_KEY' to 'Settings > Secrets' in AI Studio." 
         });
       }
 
       const ai = new GoogleGenAI({ apiKey });
-      
       const { prompt } = req.body;
+
       if (!prompt) {
         return res.status(400).json({ error: "Prompt is required" });
       }
@@ -57,24 +58,18 @@ async function startServer() {
       });
 
       const text = response.text;
-      if (!text) {
-        throw new Error("Empty response from AI model");
-      }
+      if (!text) throw new Error("Empty response from AI model");
 
       res.json(JSON.parse(text));
     } catch (error) {
       console.error("Gemini API Error:", error);
-      let errorMessage = "Failed to process health analysis on the server.";
-      
-      if (error instanceof Error) {
-        errorMessage = error.message;
-        if (errorMessage.includes("API key not valid")) {
-          errorMessage = "The provided API key is invalid. Please check your GEMINI_API_KEY configuration.";
-        }
-      }
-      
-      res.status(500).json({ error: errorMessage });
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to process analysis" });
     }
+  });
+
+  // Health check
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok" });
   });
 
   // Vite middleware for development

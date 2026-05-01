@@ -22,7 +22,7 @@ import { analyzeHeartHealth, HeartData, AnalysisResult } from './services/gemini
 export default function App() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [formData, setFormData] = useState<HeartData>({
+  const [formData, setFormData] = useState<any>({
     age: 45,
     sex: 1,
     cp: 0,
@@ -41,27 +41,40 @@ export default function App() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     
+    // Allow empty string for better UX while typing
+    if (value === '') {
+      setFormData(prev => ({ ...prev, [name]: '' }));
+      return;
+    }
+
     if (name === 'oldpeak') {
       const parsedValue = parseFloat(value);
       setFormData(prev => ({
         ...prev,
-        [name]: isNaN(parsedValue) ? 0 : parsedValue
+        [name]: isNaN(parsedValue) ? value : parsedValue
       }));
     } else {
       const parsedValue = parseInt(value);
       setFormData(prev => ({
         ...prev,
-        [name]: isNaN(parsedValue) ? 0 : parsedValue
+        [name]: isNaN(parsedValue) ? value : parsedValue
       }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Clean data before sending (convert empty strings or strings back to numbers)
+    const cleanedData = Object.entries(formData).reduce((acc, [key, val]) => {
+      acc[key] = val === '' ? 0 : Number(val);
+      return acc;
+    }, {} as any);
+
     setLoading(true);
     setResult(null);
     try {
-      const analysis = await analyzeHeartHealth(formData);
+      const analysis = await analyzeHeartHealth(cleanedData);
       setResult(analysis);
     } catch (error) {
       console.error(error);
@@ -272,7 +285,9 @@ export default function App() {
                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Confidence Score</p>
                       <span className="text-3xl font-black text-slate-900">
                         {typeof result.probability === 'number' && !isNaN(result.probability) 
-                          ? `${Math.round(result.probability * 100)}%` 
+                          ? (result.probability > 1 
+                              ? `${Math.round(result.probability)}%` 
+                              : `${Math.round(result.probability * 100)}%`)
                           : 'N/A'}
                       </span>
                     </div>
