@@ -21,6 +21,8 @@ export interface AnalysisResult {
   probability: number;
   insights: string;
   recommendations: string[];
+  isFallback?: boolean;
+  apiError?: string;
 }
 
 export async function analyzeHeartHealth(data: HeartData): Promise<AnalysisResult> {
@@ -39,7 +41,7 @@ export async function analyzeHeartHealth(data: HeartData): Promise<AnalysisResul
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ prompt }),
+      body: JSON.stringify({ prompt, data }),
     });
 
     if (!response.ok) {

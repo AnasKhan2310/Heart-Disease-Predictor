@@ -22,6 +22,7 @@ import { analyzeHeartHealth, HeartData, AnalysisResult } from './services/gemini
 export default function App() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<any>({
     age: 45,
     sex: 1,
@@ -73,13 +74,14 @@ export default function App() {
 
     setLoading(true);
     setResult(null);
+    setError(null);
     try {
       const analysis = await analyzeHeartHealth(cleanedData);
       setResult(analysis);
-    } catch (error) {
-      console.error(error);
-      const message = error instanceof Error ? error.message : "Something went wrong during the analysis.";
-      alert(message);
+    } catch (err) {
+      console.error(err);
+      const message = err instanceof Error ? err.message : "Something went wrong during the analysis.";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -267,14 +269,80 @@ export default function App() {
           {/* Analysis Results Display */}
           <aside className="lg:col-span-5 sticky top-24">
             <AnimatePresence mode="wait">
-              {result ? (
+              {error ? (
+                <motion.div 
+                  key="error"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-white border-2 border-red-500 rounded-3xl p-8 shadow-2xl shadow-red-50 space-y-6"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="bg-red-50 p-2.5 rounded-2xl shrink-0 text-red-600">
+                      <AlertTriangle className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-slate-900 text-lg">API Key Error (Expired)</h3>
+                      <p className="text-xs text-slate-500 uppercase tracking-wider font-bold">Action Required</p>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-red-50/50 border border-red-100 rounded-2xl text-sm text-red-800 leading-relaxed font-medium">
+                    {error}
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="text-xs font-black text-slate-900 uppercase tracking-widest">
+                      Isko Theek Karne Ka Tareeqa (Steps to Fix):
+                    </h4>
+                    <div className="space-y-3">
+                      <div className="flex gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs text-slate-600">
+                        <span className="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-700 shrink-0">
+                          1
+                        </span>
+                        <span>Left background ya panel me <b>Settings</b> &gt; <b>Secrets</b> par click karein.</span>
+                      </div>
+                      <div className="flex gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs text-slate-600">
+                        <span className="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-700 shrink-0">
+                          2
+                        </span>
+                        <span>Wahan <b>GEMINI_API_KEY</b> ya <b>VITE_GEMINI_API_KEY</b> ke samne <b>Edit/Options</b> par click karke apni nayi valid/working Gemini key paste karein.</span>
+                      </div>
+                      <div className="flex gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs text-slate-600">
+                        <span className="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-700 shrink-0">
+                          3
+                        </span>
+                        <span>Usko save karne ke baad page ko refresh (F5) karein aur apna analysis dubara run karein!</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={() => setError(null)}
+                    className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-2xl text-sm font-bold transition-all flex items-center justify-center gap-2"
+                  >
+                    <RefreshCcw className="w-4 h-4" /> Got it, try again
+                  </button>
+                </motion.div>
+              ) : result ? (
                 <motion.div 
                   key="result"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   className="bg-ui-card border border-ui-border rounded-3xl p-8 shadow-2xl shadow-slate-200/50 space-y-8"
                 >
-                  <div className="flex items-center justify-between">
+                  {result.isFallback && (
+                    <div className="p-4 bg-amber-50/80 border border-amber-200 rounded-2xl flex gap-3 text-xs text-amber-800 leading-relaxed font-normal">
+                      <AlertTriangle className="w-4.5 h-4.5 text-amber-600 shrink-0 mt-0.5 animate-pulse" />
+                      <div>
+                        <span className="font-black uppercase text-[10px] tracking-widest block text-amber-900 mb-0.5">
+                          ⚠️ Local Fallback Engine Active
+                        </span>
+                        Gemini API key is expired or unconfigured. Applied clinical physiological heuristics for instant risk evaluation. Renew your <b>GEMINI_API_KEY</b> in Left Menu &gt; Settings &gt; Secrets to restore advanced customized clinical reasoning.
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between col-span-2">
                     <div>
                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Risk Assessment</p>
                       <div className={`inline-flex items-center px-4 py-1.5 rounded-full border text-sm font-bold ${getRiskColor(result.riskLevel)}`}>

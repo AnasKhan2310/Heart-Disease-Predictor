@@ -2,5 +2,5 @@
   "name": "Heart Disease Predictor",
   "description": "A heart disease risk assessment and clinical analysis tool.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["Health Analysis", "Clinical Data Processing"]
+  "majorCapabilities": ["Health Analysis", "Clinical Data Processing", "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
