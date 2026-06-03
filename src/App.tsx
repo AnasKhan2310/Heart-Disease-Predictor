@@ -649,7 +649,7 @@ export default function App() {
                   ease: "easeInOut"
                 }}
               >
-                <svg viewBox="0 0 400 450" className="w-full h-auto drop-shadow-md select-none">
+                <svg viewBox="0 0 400 510" className="w-full h-auto drop-shadow-md select-none">
                   <defs>
                     <linearGradient id="aortaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                       <stop offset="0%" stopColor="#f87171" stroke="#dc2626" />
