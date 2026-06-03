@@ -168,11 +168,25 @@ async function startServer() {
   app.post("/api/analyze", async (req, res) => {
     const { prompt, data } = req.body;
     try {
-      const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
+      const apiKey = (process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || "").trim();
       
-      if (!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey === "VITE_GEMINI_API_KEY") {
-        console.warn("GEMINI_API_KEY is missing in server environment. Invoking clinical rule-based predictor fallback.");
-        const fallback = calculateFallbackHeartRisk(data, "API Key Missing: Please add 'GEMINI_API_KEY' or 'VITE_GEMINI_API_KEY' via 'Settings > Secrets' menu.");
+      const isConfigured = apiKey && 
+                           apiKey !== "MY_GEMINI_API_KEY" && 
+                           apiKey !== "VITE_GEMINI_API_KEY" && 
+                           apiKey !== "";
+
+      // Ensure key has the correct starting prefix matching Google's standard APIs
+      const hasValidPrefix = apiKey.startsWith("AIzaSy");
+
+      if (!isConfigured) {
+        console.log("[Clinical App Info] GEMINI_API_KEY is not configured. Invoking rule-based fallback.");
+        const fallback = calculateFallbackHeartRisk(data, "API Key Missing: Please add 'GEMINI_API_KEY' or 'VITE_GEMINI_API_KEY' via the AI Studio Secrets panel.");
+        return res.json(fallback);
+      }
+
+      if (!hasValidPrefix) {
+        console.log("[Clinical App Info] Custom key detected but does not match Gemini standard format. Invoking rule-based fallback.");
+        const fallback = calculateFallbackHeartRisk(data, "Invalid Key Format: A valid Gemini API key must start with 'AIzaSy'. Please generate a correct key from AI Studio (https://aistudio.google.com) and update it in 'Settings > Secrets'.");
         return res.json(fallback);
       }
 
@@ -218,15 +232,13 @@ async function startServer() {
         isFallback: false
       });
     } catch (error) {
-      console.error("Gemini API Error:", error);
       let errorMessage = "Failed to process analysis";
-      
       if (error instanceof Error) {
         errorMessage = error.message;
       } else if (typeof error === "object" && error !== null) {
         errorMessage = JSON.stringify(error);
       }
-      
+
       const isExpired = errorMessage.toLowerCase().includes("expired") || 
                         errorMessage.toLowerCase().includes("api_key_invalid") || 
                         errorMessage.toLowerCase().includes("invalid_argument") ||
@@ -238,7 +250,7 @@ async function startServer() {
         errorMessage = "API key expired. Apki Gemini API Key expire ho chuki ya invalid hai. Please AI Studio ke Settings (Left Side Menu) > Secrets me jaakar 'GEMINI_API_KEY' ya 'VITE_GEMINI_API_KEY' ko renew karein.";
       }
 
-      console.warn("Invoking clinical rule-based predictor fallback due to API error:", errorMessage);
+      console.log("[Clinical App Info] Switched to clinical rule-based predictor. Details:", errorMessage);
       const fallback = calculateFallbackHeartRisk(data, errorMessage);
       res.json(fallback);
     }
