@@ -19,3 +19,48 @@
     @apply bg-ui-bg text-slate-800 antialiased;
   }
 }
+
+@media print {
+  /* Hide unnecessary controls for clean document style */
+  header, 
+  button, 
+  nav, 
+  form, 
+  section:not(#report-dashboard), 
+  .no-print, 
+  #prediction-results-sidebar {
+    display: none !important;
+  }
+  
+  /* Reset background and maximize text contrast */
+  body, html {
+    background: white !important;
+    color: black !important;
+    size: portrait;
+  }
+  
+  /* Style results container for a clean professional medical report */
+  #report-dashboard {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    background: white !important;
+    color: black !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  #report-dashboard * {
+    color: black !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  /* Make sure SVG diagrams scale neatly on standard print pages */
+  svg {
+    max-width: 100% !important;
+    display: block !important;
+    margin: 0 auto !important;
+  }
+}
